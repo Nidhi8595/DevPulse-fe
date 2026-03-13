@@ -15,4 +15,8 @@ export class Navbar {
   document.getElementById("bookmark")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  viewTrends(){
+  document.getElementById("trends")?.scrollIntoView({ behavior: "smooth" });
+  }
+
 }

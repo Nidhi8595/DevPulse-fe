@@ -16,52 +16,54 @@ export class TechSelector {
 
   searchTerm: string = "";
 
-filteredTechStacks: string[] = [];
+  recentTech: string[] = [];
 
-  techStacks: string[] = [
-    "react",
-    "node",
-    "python",
-    "golang",
-    "express",
-    "cpp",
-    "rust",
-    "java",
-    "csharp",
-    "javascript",
-    "typescript",
-    "mysql",
-    "postgresql",
-    "tailwind",
-    "mongodb",
-    "nextjs",
-    "angular",
-    "vue",
-    "docker",
-    "kubernetes",
-    "aws",
-    "azure",
-    "gcp",
-    "flutter",
-    "dart",
-    "swift",
-    "kotlin",
-    "reactnative",
-    "nestjs",
-    "springboot",
-    "laravel",
-    "django",
-    "ruby",
-    "rails",
-    "php",
-    "graphql",
-    "apollo",
-    "redis",
-    "elasticsearch",
-    "firebase",
-    "serverless",
-    "cloudflare"
-  ];
+  // filteredTechStacks: string[] = [];
+
+  //   techStacks: string[] = [
+  //     "react",
+  //     "node",
+  //     "python",
+  //     "golang",
+  //     "express",
+  //     "cpp",
+  //     "rust",
+  //     "java",
+  //     "csharp",
+  //     "javascript",
+  //     "typescript",
+  //     "mysql",
+  //     "postgresql",
+  //     "tailwind",
+  //     "mongodb",
+  //     "nextjs",
+  //     "angular",
+  //     "vue",
+  //     "docker",
+  //     "kubernetes",
+  //     "aws",
+  //     "azure",
+  //     "gcp",
+  //     "flutter",
+  //     "dart",
+  //     "swift",
+  //     "kotlin",
+  //     "reactnative",
+  //     "nestjs",
+  //     "springboot",
+  //     "laravel",
+  //     "django",
+  //     "ruby",
+  //     "rails",
+  //     "php",
+  //     "graphql",
+  //     "apollo",
+  //     "redis",
+  //     "elasticsearch",
+  //     "firebase",
+  //     "serverless",
+  //     "cloudflare"
+  //   ];
 
   techPopularity: Record<string, number> = {};
 
@@ -104,7 +106,7 @@ filteredTechStacks: string[] = [];
 
         this.techPopularity[tech] = score;
 
-console.log(this.techPopularity)
+        console.log(this.techPopularity)
         this.loading = false;
         this.cdr.detectChanges(); // ⭐ force UI refresh
         this.updateChart();
@@ -120,17 +122,17 @@ console.log(this.techPopularity)
     });
   }
 
- ngOnInit() {
+  ngOnInit() {
 
-  this.filteredTechStacks = [...this.techStacks];
+    // this.filteredTechStacks = [...this.techStacks];
 
-  const saved = localStorage.getItem("devpulse-bookmarks");
+    const saved = localStorage.getItem("devpulse-bookmarks");
 
-  if (saved) {
-    this.bookmarks = JSON.parse(saved);
+    if (saved) {
+      this.bookmarks = JSON.parse(saved);
+    }
+
   }
-
-}
   saveBookmark(item: any) {
 
     const saved = JSON.parse(localStorage.getItem("devpulse-bookmarks") || "[]");
@@ -143,13 +145,26 @@ console.log(this.techPopularity)
 
   }
 
-  filterTech() {
+  //   filterTech() {
 
-  const term = this.searchTerm.toLowerCase();
+  //   const term = this.searchTerm.toLowerCase();
 
-  this.filteredTechStacks = this.techStacks.filter(tech =>
-    tech.toLowerCase().includes(term)
-  );
+  //   this.filteredTechStacks = this.techStacks.filter(tech =>
+  //     tech.toLowerCase().includes(term)
+  //   );
 
-}
+  // }
+
+  searchTech() {
+
+    if (!this.searchTerm.trim()) return;
+
+    const tech = this.searchTerm.trim().toLowerCase();
+
+    this.selectTech(tech);
+    if (!this.recentTech.includes(tech)) {
+      this.recentTech.unshift(tech);
+    }
+
+  }
 }

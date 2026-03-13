@@ -3,16 +3,13 @@
     <!-- Logo -->
     <div class="flex items-center gap-2">
       <span class="text-2xl font-bold text-blue-400"> DevPulse </span>
-      <span class="text-sm text-gray-400"> Tech Stack News </span>
+      <span class="text-md text-gray-300"> Tech Stack Updates </span>
     </div>
 
     <!-- Right side -->
     <div class="flex items-center gap-6 text-sm">
-      <span class="text-gray-300 hover:text-white cursor-pointer"> Dashboard </span>
 
-      <span class="text-gray-300 hover:text-white cursor-pointer"> Trends </span>
-
-      <span class="text-gray-300 hover:text-white cursor-pointer"> About </span>
+      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="viewTrends()">Trends</button>
 
       <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="viewBookmark()">Bookmarks</button>
 
