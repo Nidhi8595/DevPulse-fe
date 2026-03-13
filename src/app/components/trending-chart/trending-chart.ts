@@ -1,37 +1,55 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import Chart from 'chart.js/auto';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-trending-chart',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './trending-chart.html',
   styleUrl: './trending-chart.css',
 })
-export class TrendingChart implements AfterViewInit {
+export class TrendingChart {
 
-  ngAfterViewInit() {
+  @ViewChild('techChart')
+  chartRef!: ElementRef<HTMLCanvasElement>;
 
-    new Chart("techChart", {
+  chart: any;
+
+  createChart(labels: string[], data: number[]) {
+
+    if (!this.chartRef) return;
+
+    const ctx = this.chartRef.nativeElement;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['React', 'Node', 'MongoDB', 'Tailwind'],
+        labels: labels,
         datasets: [
           {
-            label: 'Popularity',
-            data: [95, 85, 70, 80],
-            backgroundColor: [
-              '#3b82f6',
-              '#22c55e',
-              '#a855f7',
-              '#06b6d4'
-            ]
+            label: 'Tech Popularity',
+            data: data,
+           backgroundColor: [
+"#3b82f6",
+"#22c55e",
+"#a855f7",
+"#06b6d4",
+"#f97316"
+]
           }
         ]
       },
       options: {
-        responsive: true
+        responsive: true,
+        maintainAspectRatio: false
       }
     });
 
   }
+
 }

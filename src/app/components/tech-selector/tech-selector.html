@@ -1,4 +1,4 @@
-<div class="flex flex-wrap gap-4 mt-6">
+<!-- <div class="flex flex-wrap gap-4 mt-6">
   <button
     class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg dark:bg-blue-500 dark:hover:bg-blue-600"
     (click)="selectTech('react')"
@@ -26,6 +26,17 @@
   >
     MongoDB
   </button>
+</div> -->
+<div class="flex flex-wrap gap-4 mt-6">
+
+  <button
+    *ngFor="let tech of techStacks"
+    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    (click)="selectTech(tech)"
+  >
+    {{ tech | titlecase }}
+  </button>
+
 </div>
 
 <div
@@ -139,6 +150,7 @@
   </div>
 
 </div>
+<app-trending-chart></app-trending-chart>
 
 
 
