@@ -9,5 +9,10 @@ import { Component } from '@angular/core';
 export class Navbar {
   toggleDark() {
   document.documentElement.classList.toggle("dark");
-}
+  };
+
+  viewBookmark() {
+  document.getElementById("bookmark")?.scrollIntoView({ behavior: "smooth" });
+  };
+
 }

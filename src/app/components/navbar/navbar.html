@@ -1,39 +1,22 @@
 <nav class="bg-gray-900 text-white shadow-lg">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
     <!-- Logo -->
     <div class="flex items-center gap-2">
-      <span class="text-2xl font-bold text-blue-400">
-        DevPulse
-      </span>
-      <span class="text-sm text-gray-400">
-        Tech Stack News
-      </span>
+      <span class="text-2xl font-bold text-blue-400"> DevPulse </span>
+      <span class="text-sm text-gray-400"> Tech Stack News </span>
     </div>
 
     <!-- Right side -->
     <div class="flex items-center gap-6 text-sm">
+      <span class="text-gray-300 hover:text-white cursor-pointer"> Dashboard </span>
 
-      <span class="text-gray-300 hover:text-white cursor-pointer">
-        Dashboard
-      </span>
+      <span class="text-gray-300 hover:text-white cursor-pointer"> Trends </span>
 
-      <span class="text-gray-300 hover:text-white cursor-pointer">
-        Trends
-      </span>
+      <span class="text-gray-300 hover:text-white cursor-pointer"> About </span>
 
-      <span class="text-gray-300 hover:text-white cursor-pointer">
-        About
-      </span>
+      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="viewBookmark()">Bookmarks</button>
 
-      <button
-  class="px-3 py-1 bg-gray-700 rounded text-sm"
-  (click)="toggleDark()"
->
-  🌙 Dark
-</button>
-
+      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="toggleDark()">🌙 Dark</button>
     </div>
-
   </div>
 </nav>
