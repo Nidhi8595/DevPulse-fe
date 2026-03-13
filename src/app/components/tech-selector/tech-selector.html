@@ -27,11 +27,20 @@
     MongoDB
   </button>
 </div> -->
+<div class="mt-6 mb-6">
+  <input
+    type="text"
+    placeholder="Search technologies..."
+    [(ngModel)]="searchTerm"
+    (input)="filterTech()"
+    class="w-full md:w-96 px-4 py-2 border rounded-lg shadow-sm
+           dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+  />
+</div>
 <div class="flex flex-wrap gap-4 mt-6">
 
   <button
-    *ngFor="let tech of techStacks"
-    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+*ngFor="let tech of filteredTechStacks"    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
     (click)="selectTech(tech)"
   >
     {{ tech | titlecase }}

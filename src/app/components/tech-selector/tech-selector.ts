@@ -2,9 +2,10 @@ import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FeedService } from '../../services/feed';
 import { CommonModule } from '@angular/common';
 import { TrendingChart } from '../trending-chart/trending-chart';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-tech-selector',
-  imports: [CommonModule, TrendingChart],
+  imports: [CommonModule, TrendingChart, FormsModule],
   templateUrl: './tech-selector.html',
   styleUrl: './tech-selector.css',
 })
@@ -12,6 +13,10 @@ export class TechSelector {
   @ViewChild(TrendingChart) chartComponent!: TrendingChart;
 
   bookmarks: any[] = [];
+
+  searchTerm: string = "";
+
+filteredTechStacks: string[] = [];
 
   techStacks: string[] = [
     "react",
@@ -115,15 +120,17 @@ console.log(this.techPopularity)
     });
   }
 
-  ngOnInit() {
+ ngOnInit() {
 
-    const saved = localStorage.getItem("devpulse-bookmarks");
+  this.filteredTechStacks = [...this.techStacks];
 
-    if (saved) {
-      this.bookmarks = JSON.parse(saved);
-    }
+  const saved = localStorage.getItem("devpulse-bookmarks");
 
+  if (saved) {
+    this.bookmarks = JSON.parse(saved);
   }
+
+}
   saveBookmark(item: any) {
 
     const saved = JSON.parse(localStorage.getItem("devpulse-bookmarks") || "[]");
@@ -135,4 +142,14 @@ console.log(this.techPopularity)
     this.bookmarks = saved;
 
   }
+
+  filterTech() {
+
+  const term = this.searchTerm.toLowerCase();
+
+  this.filteredTechStacks = this.techStacks.filter(tech =>
+    tech.toLowerCase().includes(term)
+  );
+
+}
 }
