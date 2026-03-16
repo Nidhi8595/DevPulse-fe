@@ -1,8 +1,10 @@
 import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FeedService } from '../../services/feed';
+import { TechService } from '../../services/tech';
 import { CommonModule } from '@angular/common';
 import { TrendingChart } from '../trending-chart/trending-chart';
 import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-tech-selector',
   imports: [CommonModule, TrendingChart, FormsModule],
@@ -10,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './tech-selector.css',
 })
 export class TechSelector {
+
   @ViewChild(TrendingChart) chartComponent!: TrendingChart;
 
   bookmarks: any[] = [];
@@ -18,52 +21,9 @@ export class TechSelector {
 
   recentTech: string[] = [];
 
-  // filteredTechStacks: string[] = [];
+  suggestions: string[] = [];
 
-  //   techStacks: string[] = [
-  //     "react",
-  //     "node",
-  //     "python",
-  //     "golang",
-  //     "express",
-  //     "cpp",
-  //     "rust",
-  //     "java",
-  //     "csharp",
-  //     "javascript",
-  //     "typescript",
-  //     "mysql",
-  //     "postgresql",
-  //     "tailwind",
-  //     "mongodb",
-  //     "nextjs",
-  //     "angular",
-  //     "vue",
-  //     "docker",
-  //     "kubernetes",
-  //     "aws",
-  //     "azure",
-  //     "gcp",
-  //     "flutter",
-  //     "dart",
-  //     "swift",
-  //     "kotlin",
-  //     "reactnative",
-  //     "nestjs",
-  //     "springboot",
-  //     "laravel",
-  //     "django",
-  //     "ruby",
-  //     "rails",
-  //     "php",
-  //     "graphql",
-  //     "apollo",
-  //     "redis",
-  //     "elasticsearch",
-  //     "firebase",
-  //     "serverless",
-  //     "cloudflare"
-  //   ];
+  selectedFromSuggestion = false;
 
   techPopularity: Record<string, number> = {};
 
@@ -73,9 +33,27 @@ export class TechSelector {
 
   loading = false;
 
-  constructor(private feedService: FeedService,
+  constructor(
+    private feedService: FeedService,
+    private techService: TechService,
     private cdr: ChangeDetectorRef
   ) { }
+
+  normalizeTechName(name: string): string {
+
+    const map: Record<string, string> = {
+      nodejs: "node",
+      "node.js": "node",
+      reactjs: "react",
+      "react.js": "react",
+      nestjs: "nest",
+      "express.js": "express",
+    };
+
+    const clean = name.toLowerCase().trim();
+
+    return map[clean] || clean;
+  }
 
   updateChart() {
 
@@ -88,12 +66,30 @@ export class TechSelector {
   }
 
   selectTech(tech: string) {
+
+    this.selectedFromSuggestion = true;
+    this.searchTerm = tech;
+    this.suggestions = [];
+
+    const canonical = this.normalizeTechName(tech);
+
+    if (this.techPopularity[canonical]) {
+      console.log("Already loaded:", canonical);
+      return;
+    }
+
     this.loading = true;
 
     this.feedService.getFeed(tech).subscribe({
       next: (data: any) => {
 
         console.log("Feed Data:", data);
+
+        if (data.error) {
+          alert(data.error);
+          this.loading = false;
+          return;
+        }
 
         this.news = data.news;
         this.github = data.github;
@@ -104,67 +100,73 @@ export class TechSelector {
           data.reddit.length * 2 +
           data.news.length;
 
-        this.techPopularity[tech] = score;
+        this.techPopularity[canonical] = score;
 
-        console.log(this.techPopularity)
         this.loading = false;
-        this.cdr.detectChanges(); // ⭐ force UI refresh
+        this.cdr.detectChanges();
         this.updateChart();
-
 
       },
       error: (error) => {
         console.error('Error fetching feed:', error);
         this.loading = false;
-        this.cdr.detectChanges();
-
       }
     });
   }
 
   ngOnInit() {
 
-    // this.filteredTechStacks = [...this.techStacks];
-
     const saved = localStorage.getItem("devpulse-bookmarks");
 
     if (saved) {
       this.bookmarks = JSON.parse(saved);
     }
-
   }
+
   saveBookmark(item: any) {
 
-    const saved = JSON.parse(localStorage.getItem("devpulse-bookmarks") || "[]");
+    const saved = JSON.parse(
+      localStorage.getItem("devpulse-bookmarks") || "[]"
+    );
 
     saved.push(item);
 
-    localStorage.setItem("devpulse-bookmarks", JSON.stringify(saved));
+    localStorage.setItem(
+      "devpulse-bookmarks",
+      JSON.stringify(saved)
+    );
 
     this.bookmarks = saved;
-
   }
-
-  //   filterTech() {
-
-  //   const term = this.searchTerm.toLowerCase();
-
-  //   this.filteredTechStacks = this.techStacks.filter(tech =>
-  //     tech.toLowerCase().includes(term)
-  //   );
-
-  // }
 
   searchTech() {
 
-    if (!this.searchTerm.trim()) return;
+    if (!this.selectedFromSuggestion) {
+      alert("Please select a technology from the suggestions.");
+      return;
+    }
 
     const tech = this.searchTerm.trim().toLowerCase();
 
-    this.selectTech(tech);
     if (!this.recentTech.includes(tech)) {
       this.recentTech.unshift(tech);
     }
+  }
 
+  onSearchChange() {
+    this.selectedFromSuggestion = false;
+
+    if (this.searchTerm.length < 2) {
+      this.suggestions = [];
+      return;
+    }
+
+    this.techService
+      .search(this.searchTerm)
+      .subscribe((data: any) => {
+
+        this.suggestions = data;
+
+      });
   }
 }
