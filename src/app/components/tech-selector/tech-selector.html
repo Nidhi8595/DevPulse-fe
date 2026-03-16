@@ -10,7 +10,7 @@
 
   <button
     (click)="searchTech()"
-      [disabled]="!selectedFromSuggestion"
+    [disabled]="!selectedFromSuggestion"
     class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
   >
     Search
@@ -86,12 +86,45 @@
         *ngFor="let post of reddit"
         class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl transition transform hover:-translate-y-1"
       >
-        <a [href]="post.url" target="_blank" class="font-semibold text-blue-600 dark:text-blue-400">
-          {{ post.title }}
-        </a>
+        <div class="flex justify-between items-start">
+          <a
+            [href]="post.url"
+            target="_blank"
+            class="font-semibold text-blue-600 dark:text-blue-400"
+          >
+            {{ post.title }}
+          </a>
+          <button class="text-yellow-500 hover:scale-110 transition" (click)="saveBookmark(post)">
+            ⭐
+          </button>
+        </div>
 
         <p class="text-sm text-gray-500 dark:text-gray-400">
           r/{{ post.subreddit }} • ⭐ {{ post.score }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="stackoverflow.length > 0" class="mt-10">
+    <h2 class="text-2xl font-bold mb-4">❓ StackOverflow Questions</h2>
+
+    <div class="space-y-4">
+      <div
+        *ngFor="let q of stackoverflow"
+        class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl"
+      >
+        <div class="flex justify-between items-start">
+          <a [href]="q.url" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold">
+            {{ q.title }}
+          </a>
+          <button class="text-yellow-500 hover:scale-110 transition" (click)="saveBookmark(q)">
+            ⭐
+          </button>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          ⭐ {{ q.score }} • 💬 {{ q.answers }} answers
         </p>
       </div>
     </div>
@@ -105,14 +138,22 @@
         *ngFor="let article of news"
         class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl transition transform hover:-translate-y-1"
       >
-        <a
-          [href]="article.url"
-          target="_blank"
-          class="font-semibold text-blue-600 dark:text-blue-400"
-        >
-          {{ article.title }}
-        </a>
+        <div class="flex justify-between items-start">
+          <a
+            [href]="article.url"
+            target="_blank"
+            class="text-blue-600 dark:text-blue-400 font-semibold"
+          >
+            {{ article.title }}
+          </a>
 
+          <button
+            class="text-yellow-500 hover:scale-110 transition"
+            (click)="saveBookmark(article)"
+          >
+            ⭐
+          </button>
+        </div>
         <p class="text-sm text-gray-500 dark:text-gray-400">
           {{ article.source }}
         </p>

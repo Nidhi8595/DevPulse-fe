@@ -30,6 +30,7 @@ export class TechSelector {
   news: any[] = [];
   github: any[] = [];
   reddit: any[] = [];
+  stackoverflow: any[] = [];
 
   loading = false;
 
@@ -94,9 +95,10 @@ export class TechSelector {
         this.news = data.news;
         this.github = data.github;
         this.reddit = data.reddit;
-
+        this.stackoverflow = data.stackoverflow;
         const score =
           data.github.length * 3 +
+          data.stackoverflow.length * 4 +
           data.reddit.length * 2 +
           data.news.length;
 
