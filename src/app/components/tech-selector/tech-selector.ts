@@ -31,6 +31,8 @@ export class TechSelector {
   github: any[] = [];
   reddit: any[] = [];
   stackoverflow: any[] = [];
+  hackernews: any[] = [];
+  devto: any[] = [];
 
   loading = false;
 
@@ -96,11 +98,15 @@ export class TechSelector {
         this.github = data.github;
         this.reddit = data.reddit;
         this.stackoverflow = data.stackoverflow;
+        this.hackernews = data.hackernews;
+        this.devto = data.devto;
+
         const score =
           data.github.length * 3 +
           data.stackoverflow.length * 4 +
           data.reddit.length * 2 +
-          data.news.length;
+          data.hackernews.length +
+          data.devto.length;
 
         this.techPopularity[canonical] = score;
 

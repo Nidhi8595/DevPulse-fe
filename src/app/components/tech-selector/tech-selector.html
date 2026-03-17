@@ -130,6 +130,74 @@
     </div>
   </div>
 
+  <div *ngIf="hackernews.length > 0" class="mt-10">
+    <h2 class="text-2xl font-bold mb-4">🔥 Hacker News</h2>
+
+    <div class="space-y-4">
+      <div
+        *ngFor="let post of hackernews"
+        class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl"
+      >
+        <div class="">
+          <a
+            [href]="post.url"
+            target="_blank"
+            class="text-blue-600 dark:text-blue-400 font-semibold"
+          >
+            {{ post.title }}
+          </a>
+          <button
+            class="text-yellow-500 hover:scale-110 transition float-right"
+            (click)="saveBookmark(post)"
+          >
+            ⭐
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          ▲ {{ post.points }} points • {{ post.author }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="devto.length > 0" class="mt-10">
+
+  <h2 class="text-2xl font-bold mb-4">
+    ✍️ Dev.to Articles
+  </h2>
+
+  <div class="space-y-4">
+
+    <div
+      *ngFor="let article of devto"
+      class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl"
+    >
+
+      <div class="flex justify-between items-start">
+        <a
+          [href]="article.url"
+          target="_blank"
+          class="text-blue-600 dark:text-blue-400 font-semibold"
+        >
+          {{ article.title }}
+        </a>
+        <button
+          class="text-yellow-500 hover:scale-110 transition"
+          (click)="saveBookmark(article)"
+        >
+          ⭐
+        </button>
+      </div>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        {{ article.author }} • ❤️ {{ article.reactions }}
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
   <div *ngIf="news.length > 0" class="mt-10">
     <h2 class="text-2xl font-bold mb-4">📰 Tech News</h2>
 
