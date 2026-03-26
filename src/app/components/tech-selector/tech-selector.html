@@ -1,4 +1,4 @@
-<div class="mt-6 flex gap-3 relative">
+<!-- <div class="mt-6 flex gap-3 relative">
   <input
     type="text"
     placeholder="Search any technology (react, rust, docker...)"
@@ -228,9 +228,78 @@
       </div>
     </div>
   </div>
+
+<div *ngIf="githubTrending.length > 0">
+  <h2 class="text-xl font-semibold border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+    🚀 GitHub Trending
+  </h2>
+  <div class="space-y-4">
+    <div
+      *ngFor="let repo of githubTrending"
+      class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl transition transform hover:-translate-y-1"
+    >
+      <div class="flex justify-between items-start mb-1">
+        <a [href]="repo.url" target="_blank"
+           class="font-semibold text-blue-600 dark:text-blue-400">
+          {{ repo.name }}
+        </a>
+        <button class="text-yellow-500 hover:scale-110 transition" (click)="saveBookmark(repo)">
+          ⭐
+        </button>
+      </div>
+
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+        {{ repo.description }}
+      </p>
+      <div class="flex flex-wrap gap-2 text-xs">
+        <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full">
+          ⭐ {{ repo.stars | number }}
+        </span>
+        <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full">
+          {{ repo.language }}
+        </span>
+        <span
+          *ngFor="let topic of repo.topics"
+          class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full"
+        >
+          {{ topic }}
+        </span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ⭐ BOOKMARKS SECTION -->
+<div *ngIf="npm.length > 0">
+  <h2 class="text-xl font-semibold border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+    📦 NPM Packages
+  </h2>
+  <div class="space-y-4">
+    <div
+      *ngFor="let pkg of npm"
+      class="p-4 bg-white dark:bg-gray-800 shadow rounded-lg hover:shadow-xl transition transform hover:-translate-y-1"
+    >
+      <div class="flex justify-between items-start mb-1">
+        <a [href]="pkg.url" target="_blank"
+           class="font-semibold text-blue-600 dark:text-blue-400">
+          {{ pkg.name }}
+        </a>
+        <span class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-0.5 rounded-full ml-2 shrink-0">
+          v{{ pkg.version }}
+        </span>
+        <button class="text-yellow-500 hover:scale-110 transition" (click)="saveBookmark(pkg)">
+          ⭐
+        </button>
+      </div>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+        {{ pkg.description }}
+      </p>
+      <p class="text-xs text-gray-400 dark:text-gray-500">
+        📥 {{ pkg.weeklyDownloads | number }} downloads/week
+      </p>
+    </div>
+  </div>
+</div>
+</div>
 
 <div class="mt-16" id="bookmark">
   <h2 class="text-xl font-bold mb-4">⭐ Bookmarks</h2>
@@ -246,3 +315,373 @@
   </div>
 </div>
 <app-trending-chart></app-trending-chart>
+ -->
+
+
+ <!-- ═══════════════════════════════════════════════
+     SEARCH BAR
+═══════════════════════════════════════════════ -->
+<div class="relative mb-8">
+  <div class="flex gap-3">
+    <!-- Input wrapper -->
+    <div class="relative flex-1">
+      <div style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+             stroke-width="1.5" style="color: var(--text-muted);">
+          <circle cx="7" cy="7" r="5"/>
+          <path d="M11 11l3 3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <input
+        type="text"
+        placeholder="Search any technology — react, rust, docker, python..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        (keyup.enter)="searchTech()"
+        class="search-input"
+        style="padding-left: 40px;"
+      />
+
+      <!-- Suggestion dropdown -->
+      <div class="suggestion-dropdown" *ngIf="suggestions.length > 0">
+        <div
+          *ngFor="let tech of suggestions"
+          class="suggestion-item"
+          (click)="selectTech(tech)"
+        >
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor" style="opacity: 0.4; flex-shrink: 0;">
+            <circle cx="5.5" cy="5.5" r="5.5"/>
+          </svg>
+          {{ tech }}
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="btn-accent"
+      (click)="searchTech()"
+      [disabled]="!selectedFromSuggestion"
+    >
+      Search
+    </button>
+  </div>
+
+  <!-- Recent searches -->
+  <div *ngIf="recentTech.length > 0" class="flex flex-wrap gap-2 mt-4">
+    <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); align-self: center; margin-right: 2px;">
+      Recent:
+    </span>
+    <button
+      *ngFor="let tech of recentTech"
+      class="tech-chip"
+      (click)="selectTech(tech)"
+    >
+      {{ tech }}
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     LOADING STATE — skeleton cards
+═══════════════════════════════════════════════ -->
+<div *ngIf="loading" class="feed-grid">
+  <div *ngFor="let _ of [1,2,3,4,5,6]" class="glass-card p-5">
+    <div class="skeleton h-3 w-24 mb-4 rounded"></div>
+    <div class="skeleton h-4 w-full mb-2 rounded"></div>
+    <div class="skeleton h-4 w-4/5 mb-2 rounded"></div>
+    <div class="skeleton h-3 w-32 mt-4 rounded"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     EMPTY / INTRO STATE
+═══════════════════════════════════════════════ -->
+<div
+  *ngIf="!loading && !hasResults"
+  class="empty-state"
+  style="min-height: 300px;"
+>
+  <div style="font-size: 40px; line-height: 1;">⚡</div>
+  <p style="font-size: 15px; font-weight: 500; color: var(--text-primary);">Ready to pulse</p>
+  <p>Search a technology above to see live updates from 8 developer sources</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     MAIN FEED GRID
+═══════════════════════════════════════════════ -->
+<div *ngIf="!loading && hasResults" class="feed-grid stagger-children">
+
+  <!-- ─── GitHub Releases ─── -->
+  <div *ngIf="github.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>🔥</span> GitHub Releases
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let item of github" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="item.url" target="_blank" class="card-link flex-1">
+            {{ item.name }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(item)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span>{{ item.repo }}</span>
+          <span style="opacity: 0.5;">·</span>
+          <span>{{ item.date | date:'MMM d, y' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── GitHub Trending ─── -->
+  <div *ngIf="githubTrending.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>🚀</span> GitHub Trending
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let repo of githubTrending" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="repo.url" target="_blank" class="card-link flex-1">
+            {{ repo.name }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(repo)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px; line-height: 1.5;" *ngIf="repo.description">
+          {{ repo.description }}
+        </p>
+        <div class="card-meta" style="margin-top: 8px; flex-wrap: wrap; gap: 6px;">
+          <span class="pill" style="background: rgba(245,158,11,0.12); color: #d97706;">
+            ⭐ {{ repo.stars | number }}
+          </span>
+          <span *ngIf="repo.language" class="pill" style="background: var(--accent-soft); color: var(--accent);">
+            {{ repo.language }}
+          </span>
+          <span
+            *ngFor="let topic of repo.topics"
+            class="pill"
+            style="background: var(--surface); border: 1px solid var(--border); color: var(--text-muted);"
+          >
+            {{ topic }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Reddit ─── -->
+  <div *ngIf="reddit.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>💬</span> Reddit Discussions
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let post of reddit" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="post.url" target="_blank" class="card-link flex-1">
+            {{ post.title }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(post)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span class="pill" style="background: rgba(255,69,0,0.1); color: #ff4500; font-size: 10px;">
+            r/{{ post.subreddit }}
+          </span>
+          <span>▲ {{ post.score | number }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── StackOverflow ─── -->
+  <div *ngIf="stackoverflow.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>❓</span> Stack Overflow
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let q of stackoverflow" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="q.url" target="_blank" class="card-link flex-1">
+            {{ q.title }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(q)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span class="pill" style="background: rgba(244,130,36,0.1); color: #f48024; font-size: 10px;">
+            ▲ {{ q.score }}
+          </span>
+          <span>{{ q.answers }} answers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Hacker News ─── -->
+  <div *ngIf="hackernews.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>🟠</span> Hacker News
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let post of hackernews" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="post.url" target="_blank" class="card-link flex-1">
+            {{ post.title }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(post)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span class="pill" style="background: rgba(255,102,0,0.1); color: #ff6600; font-size: 10px;">
+            ▲ {{ post.points }}
+          </span>
+          <span>by {{ post.author }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Dev.to ─── -->
+  <div *ngIf="devto.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>✍️</span> Dev.to Articles
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let article of devto" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="article.url" target="_blank" class="card-link flex-1">
+            {{ article.title }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(article)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span>{{ article.author }}</span>
+          <span style="opacity:0.5;">·</span>
+          <span>❤️ {{ article.reactions }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Tech News ─── -->
+  <div *ngIf="news.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>📰</span> Tech News
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let article of news" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <a [href]="article.url" target="_blank" class="card-link flex-1">
+            {{ article.title }}
+          </a>
+          <button class="bookmark-btn" (click)="saveBookmark(article)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta">
+          <span>{{ article.source }}</span>
+          <span style="opacity:0.5;">·</span>
+          <span>{{ article.publishedAt | date:'MMM d' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── NPM Packages ─── -->
+  <div *ngIf="npm.length > 0" class="animate-in">
+    <div class="section-header">
+      <span>📦</span> NPM Packages
+    </div>
+    <div class="space-y-3 stagger-children">
+      <div *ngFor="let pkg of npm" class="glass-card p-4 animate-in">
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <a [href]="pkg.url" target="_blank" class="card-link" style="display: inline;">
+                {{ pkg.name }}
+              </a>
+              <span class="pill" style="background: rgba(34,197,94,0.12); color: #16a34a; font-size: 10px;">
+                v{{ pkg.version }}
+              </span>
+            </div>
+            <p *ngIf="pkg.description" style="font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.5;">
+              {{ pkg.description }}
+            </p>
+          </div>
+          <button class="bookmark-btn" (click)="saveBookmark(pkg)" title="Save bookmark">
+            ★
+          </button>
+        </div>
+        <div class="card-meta" style="margin-top: 8px;">
+          <span>📥 {{ pkg.weeklyDownloads | number }} / week</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end feed-grid -->
+
+
+<!-- ═══════════════════════════════════════════════
+     TRENDING CHART
+═══════════════════════════════════════════════ -->
+<div *ngIf="Object.keys(techPopularity).length > 0" class="mt-12" id="trends">
+  <div class="section-header" style="margin-bottom: 16px;">
+    <span>📊</span> Technology Pulse Score
+    <span style="margin-left: auto; font-size: 10px; opacity: 0.6; text-transform: none; letter-spacing: 0; font-weight: 400;">
+      based on GitHub · Reddit · StackOverflow · HN · Dev.to
+    </span>
+  </div>
+  <div class="chart-container">
+    <app-trending-chart></app-trending-chart>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     BOOKMARKS
+═══════════════════════════════════════════════ -->
+<div class="mt-12" id="bookmark">
+  <div class="section-header" style="margin-bottom: 16px;">
+    <span>★</span> Saved Bookmarks
+    <button
+      *ngIf="bookmarks.length > 0"
+      (click)="clearBookmarks()"
+      style="margin-left: auto; font-size: 10px; color: var(--text-muted); cursor: pointer; background: none; border: none; font-family: var(--font-mono); text-transform: none; letter-spacing: 0; font-weight: 400; padding: 0;"
+    >
+      Clear all
+    </button>
+  </div>
+
+  <div *ngIf="bookmarks.length === 0" class="empty-state" style="min-height: 160px;">
+    <span style="font-size: 28px;">★</span>
+    <p>No bookmarks yet — click ★ on any card to save it</p>
+  </div>
+
+  <div *ngIf="bookmarks.length > 0" class="feed-grid stagger-children">
+    <div *ngFor="let item of bookmarks; let i = index" class="glass-card p-4 animate-in">
+      <div class="flex justify-between items-start gap-3">
+        <a [href]="item.url" target="_blank" class="card-link flex-1">
+          {{ item.name || item.title }}
+        </a>
+        <button
+          (click)="removeBookmark(i)"
+          style="font-size: 12px; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 2px; border-radius: 4px; transition: color 0.15s; flex-shrink: 0;"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

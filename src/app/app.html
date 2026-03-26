@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<!-- <app-navbar></app-navbar>
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div class="max-w-6xl mx-auto p-8">
     <p class="mb-4 text-lg">
@@ -6,5 +6,27 @@
     </p>
 
     <app-tech-selector></app-tech-selector>
+  </div>
+</div> -->
+
+<div style="position: relative; z-index: 1;">
+  <app-navbar></app-navbar>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Hero header -->
+    <div class="mb-10">
+      <h1 style="font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; color: var(--text-primary); margin-bottom: 10px;">
+        Your personal tech<br>
+        <span style="color: var(--accent);">newsroom</span>
+      </h1>
+      <p style="font-size: 15px; color: var(--text-secondary); max-width: 480px; line-height: 1.6;">
+        Search any technology and get live GitHub releases, Reddit discussions,
+        StackOverflow questions, HackerNews posts, Dev.to articles and more — all in one place.
+      </p>
+    </div>
+
+    <app-tech-selector></app-tech-selector>
+
   </div>
 </div>
