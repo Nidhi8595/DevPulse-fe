@@ -1,60 +1,3 @@
-// import { Component, ViewChild, ElementRef } from '@angular/core';
-// import Chart from 'chart.js/auto';
-// import { CommonModule } from '@angular/common';
-
-// @Component({
-//   selector: 'app-trending-chart',
-//   standalone: true,
-//   imports: [CommonModule],
-//   templateUrl: './trending-chart.html',
-//   styleUrl: './trending-chart.css',
-// })
-// export class TrendingChart {
-
-//   @ViewChild('techChart')
-//   chartRef!: ElementRef<HTMLCanvasElement>;
-
-//   chart: any;
-
-//   createChart(labels: string[], data: number[]) {
-
-//     if (!this.chartRef) return;
-
-//     const ctx = this.chartRef.nativeElement;
-
-//     if (this.chart) {
-//       this.chart.destroy();
-//     }
-
-//     this.chart = new Chart(ctx, {
-//       type: 'bar',
-//       data: {
-//         labels: labels,
-//         datasets: [
-//           {
-//             label: 'Tech Popularity',
-//             data: data,
-//            backgroundColor: [
-// "#3b82f6",
-// "#22c55e",
-// "#a855f7",
-// "#06b6d4",
-// "#f97316"
-// ]
-//           }
-//         ]
-//       },
-//       options: {
-//         responsive: true,
-//         maintainAspectRatio: false
-//       }
-//     });
-
-//   }
-
-// }
-
-
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Chart from 'chart.js/auto';
@@ -64,15 +7,13 @@ import Chart from 'chart.js/auto';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div style="position: relative; height: 280px;">
+    <div style="position:relative; height:300px;">
       <canvas #techChart></canvas>
-      <div *ngIf="!hasData" style="
-        position: absolute; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 13px; color: var(--text-muted);
-        font-family: var(--font-mono);
-      ">
-        Search technologies to build the chart
+      <div *ngIf="!hasData"
+           style="position:absolute;inset:0;display:flex;align-items:center;
+                  justify-content:center;font-size:14px;color:var(--text-muted);
+                  font-family:var(--font-mono);">
+        Search technologies to see scores here
       </div>
     </div>
   `,
@@ -85,11 +26,11 @@ export class TrendingChart implements AfterViewInit {
   hasData = false;
   viewReady = false;
 
-  // Color palette for bars — cycles through these
-  private colors = [
+  // Distinct color palette — each tech gets its own color
+  private palette = [
     '#6366f1', '#8b5cf6', '#06b6d4', '#10b981',
     '#f59e0b', '#ef4444', '#ec4899', '#14b8a6',
-    '#f97316', '#84cc16',
+    '#f97316', '#84cc16', '#3b82f6', '#a78bfa',
   ];
 
   ngAfterViewInit() {
@@ -100,15 +41,14 @@ export class TrendingChart implements AfterViewInit {
     if (!this.viewReady || !this.chartRef?.nativeElement) return;
 
     const isDark = document.documentElement.classList.contains('dark');
-    const textColor   = isDark ? 'rgba(240,239,235,0.6)' : 'rgba(17,17,16,0.5)';
-    const gridColor   = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    const textColor = isDark ? 'rgba(240,239,235,0.5)' : 'rgba(17,17,16,0.45)';
+    const gridColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
 
-    const bgColors = labels.map((_, i) => this.colors[i % this.colors.length]);
-    const hoverColors = bgColors.map(c => c + 'cc');
+    // Give each bar a distinct color, cycling through palette
+    const bgColors    = labels.map((_, i) => this.palette[i % this.palette.length]);
+    const hoverColors = bgColors.map(c => c + 'dd');
 
-    if (this.chart) {
-      this.chart.destroy();
-    }
+    if (this.chart) this.chart.destroy();
 
     this.hasData = labels.length > 0;
 
@@ -121,29 +61,33 @@ export class TrendingChart implements AfterViewInit {
           data,
           backgroundColor: bgColors,
           hoverBackgroundColor: hoverColors,
-          borderRadius: 8,
+          borderRadius: 10,
           borderSkipped: false,
+          borderWidth: 0,
         }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 500,
+          duration: 600,
           easing: 'easeOutQuart',
         },
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: isDark ? '#1a1a1f' : '#ffffff',
+            backgroundColor: isDark ? '#18181b' : '#ffffff',
             titleColor: isDark ? '#f0efeb' : '#111110',
             bodyColor: isDark ? '#8c8a84' : '#6b6a66',
-            borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
             borderWidth: 1,
-            padding: 12,
-            cornerRadius: 10,
+            padding: { x: 14, y: 10 },
+            cornerRadius: 12,
+            titleFont: { family: "'Space Grotesk', sans-serif", weight: 600, size: 13 },
+            bodyFont:  { family: "'JetBrains Mono', monospace", size: 12 },
             callbacks: {
-              label: (ctx) => ` Score: ${ctx.parsed.y}`,
+              title: (items) => items[0].label.toUpperCase(),
+              label: (ctx) => `  Pulse score: ${ctx.parsed.y}`,
             },
           },
         },
@@ -153,17 +97,19 @@ export class TrendingChart implements AfterViewInit {
             border: { display: false },
             ticks: {
               color: textColor,
-              font: { family: 'JetBrains Mono, monospace', size: 12 },
+              font: { family: "'JetBrains Mono', monospace", size: 12 },
             },
           },
           y: {
-            grid: { color: gridColor },
-            border: { display: false },
+            grid: { color: gridColor, lineWidth: 1 },
+            border: { display: false, dash: [4, 4] },
             ticks: {
               color: textColor,
-              font: { family: 'JetBrains Mono, monospace', size: 11 },
+              font: { family: "'JetBrains Mono', monospace", size: 11 },
               maxTicksLimit: 5,
+              padding: 8,
             },
+            beginAtZero: true,
           },
         },
       },

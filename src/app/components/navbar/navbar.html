@@ -1,66 +1,79 @@
-<!-- <nav class="bg-gray-900 text-white shadow-lg">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-    <div class="flex items-center gap-2">
-      <span class="text-2xl font-bold text-blue-400"> DevPulse </span>
-      <span class="text-md text-gray-300"> Tech Stack Updates </span>
-    </div>
-
-    <div class="flex items-center gap-6 text-sm">
-
-      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="viewTrends()">Trends</button>
-
-      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="viewBookmark()">Bookmarks</button>
-
-      <button class="px-3 py-1 bg-gray-700 rounded text-sm" (click)="toggleDark()" > 🌙 Dark</button>
-    </div>
-  </div>
-</nav> -->
-
 <nav class="navbar-glass sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+  <div style="max-width:1280px; margin:0 auto; padding:0 24px; height:58px; display:flex; align-items:center; justify-content:space-between;">
 
     <!-- Logo -->
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-           style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="3" fill="white"/>
-          <circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.2" fill="none" stroke-dasharray="3 2"/>
+    <div style="display:flex; align-items:center; gap:12px; cursor:default; user-select:none;">
+      <!-- Animated pulse logo -->
+      <div style="position:relative; width:34px; height:34px;">
+        <!-- Outer rotating ring -->
+        <svg style="position:absolute;inset:0;animation:spinLogo 8s linear infinite;" width="34" height="34" viewBox="0 0 34 34">
+          <circle cx="17" cy="17" r="14" fill="none" stroke="url(#logoGrad)" stroke-width="1.5"
+                  stroke-dasharray="6 3" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
         </svg>
+        <!-- Inner pulsing dot -->
+        <div style="
+          position:absolute; top:50%; left:50%;
+          transform:translate(-50%,-50%);
+          width:10px; height:10px;
+          border-radius:50%;
+          background:linear-gradient(135deg,#6366f1,#8b5cf6);
+          animation:pulseDot 2.4s ease-in-out infinite;
+        "></div>
       </div>
-      <div class="flex items-baseline gap-2">
-        <span style="font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--text-primary);">
-          DevPulse
-        </span>
-        <span class="hidden sm:block" style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 0.04em;">
-          v2.0
-        </span>
+
+      <div style="display:flex; align-items:baseline; gap:6px;">
+        <span style="font-family:var(--font-display); font-weight:700; font-size:19px; letter-spacing:-0.03em; color:var(--text-primary);">DevPulse</span>
+        <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:0.06em; padding:2px 6px; border:1px solid var(--border); border-radius:99px;">v2</span>
       </div>
     </div>
 
-    <!-- Right actions -->
-    <div class="flex items-center gap-2">
-      <button class="nav-btn hidden sm:flex items-center gap-1.5" (click)="viewTrends()">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5">
-          <polyline points="1,9 4,5 7,7 12,2"/>
+    <!-- Right nav -->
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="nav-btn" (click)="viewTrends()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <polyline points="1,10 4,6 7,8 12,2"/>
           <polyline points="9,2 12,2 12,5"/>
         </svg>
-        Trends
+        <span class="hide-xs">Trends</span>
       </button>
 
-      <button class="nav-btn hidden sm:flex items-center gap-1.5" (click)="viewBookmark()">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M2 2h9v10l-4.5-2.5L2 12V2z"/>
+      <button class="nav-btn" (click)="viewBookmark()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 2h8v10l-4-2.5-4 2.5V2z"/>
         </svg>
-        Bookmarks
+        <span class="hide-xs">Bookmarks</span>
       </button>
 
-      <button class="nav-btn flex items-center gap-1.5" (click)="toggleDark()" [attr.aria-label]="isDark ? 'Light mode' : 'Dark mode'">
-        <span style="font-size: 14px;">{{ isDark ? '☀️' : '🌙' }}</span>
-        <span class="hidden sm:inline">{{ isDark ? 'Light' : 'Dark' }}</span>
+      <!-- Dark mode toggle — styled like a small switch -->
+      <button
+        class="nav-btn"
+        (click)="toggleDark()"
+        style="min-width:80px; justify-content:center;"
+        [title]="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        <span style="font-size:13px;">{{ isDark ? '☀️' : '🌙' }}</span>
+        {{ isDark ? 'Light' : 'Dark' }}
       </button>
     </div>
-
   </div>
 </nav>
+
+<style>
+  @keyframes spinLogo {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes pulseDot {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity:1; }
+    50%     { transform: translate(-50%,-50%) scale(1.4); opacity:0.7; }
+  }
+  @media (max-width: 480px) {
+    .hide-xs { display: none; }
+  }
+</style>

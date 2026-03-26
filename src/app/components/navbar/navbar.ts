@@ -1,26 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-navbar',
-//   imports: [],
-//   templateUrl: './navbar.html',
-//   styleUrl: './navbar.css',
-// })
-// export class Navbar {
-//   toggleDark() {
-//   document.documentElement.classList.toggle("dark");
-//   };
-
-//   viewBookmark() {
-//   document.getElementById("bookmark")?.scrollIntoView({ behavior: "smooth" });
-//   };
-
-//   viewTrends(){
-//   document.getElementById("trends")?.scrollIntoView({ behavior: "smooth" });
-//   }
-
-// }
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -29,7 +6,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
 })
 export class Navbar {
   isDark = false;
@@ -40,12 +16,10 @@ export class Navbar {
   }
 
   viewTrends() {
-    const el = document.getElementById('trends');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('trends')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   viewBookmark() {
-    const el = document.getElementById('bookmark');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('bookmark')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
