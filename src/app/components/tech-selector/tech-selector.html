@@ -1,17 +1,29 @@
 <!-- ══════════════════════════════════════════
      SEARCH BAR
 ══════════════════════════════════════════ -->
-<div style="position:relative; margin-bottom:32px;">
-  <div style="display:flex; gap:12px; align-items:stretch;">
-
+<div style="position: relative; margin-bottom: 32px">
+  <div style="display: flex; gap: 12px; align-items: stretch">
     <!-- Input + icon wrapper -->
-    <div style="position:relative; flex:1;">
-      <svg style="position:absolute; left:15px; top:50%; transform:translateY(-50%);
-                  pointer-events:none; color:var(--text-muted);"
-           width="17" height="17" viewBox="0 0 17 17" fill="none"
-           stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-        <circle cx="7.5" cy="7.5" r="5.5"/>
-        <path d="M12 12l3.5 3.5"/>
+    <div style="position: relative; flex: 1">
+      <svg
+        style="
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          pointer-events: none;
+          color: var(--text-muted);
+        "
+        width="17"
+        height="17"
+        viewBox="0 0 17 17"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      >
+        <circle cx="7.5" cy="7.5" r="5.5" />
+        <path d="M12 12l3.5 3.5" />
       </svg>
 
       <input
@@ -25,141 +37,218 @@
 
       <!-- Suggestions dropdown -->
       <div class="suggestion-dropdown" *ngIf="suggestions.length > 0">
-        <div *ngFor="let tech of suggestions; let i = index"
-             class="suggestion-item"
-             (click)="selectTech(tech)">
+        <div
+          *ngFor="let tech of suggestions; let i = index"
+          class="suggestion-item"
+          (click)="selectTech(tech)"
+        >
           <span class="suggestion-dot"></span>
-          <span style="font-family:var(--font-mono);">{{ tech }}</span>
-          <span style="margin-left:auto; font-size:10px; color:var(--text-muted); opacity:0.6;">↵</span>
+          <span style="font-family: var(--font-mono)">{{ tech }}</span>
+          <span style="margin-left: auto; font-size: 10px; color: var(--text-muted); opacity: 0.6"
+            >↵</span
+          >
         </div>
       </div>
     </div>
 
-    <button class="btn-accent"
-            (click)="searchTech()"
-            [disabled]="!selectedFromSuggestion">
+    <button class="btn-accent" (click)="searchTech()" [disabled]="!selectedFromSuggestion">
       Search
     </button>
   </div>
 
   <!-- Recent searches row -->
-  <div *ngIf="recentTech.length > 0"
-       style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:14px;">
-    <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); letter-spacing:0.06em;">
+  <div
+    *ngIf="recentTech.length > 0"
+    style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px"
+  >
+    <span
+      style="
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+      "
+    >
       Recent:
     </span>
-    <button *ngFor="let tech of recentTech"
-            class="tech-chip"
-            (click)="selectTech(tech)">
+    <button *ngFor="let tech of recentTech" class="tech-chip" (click)="selectTech(tech)">
       {{ tech }}
     </button>
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════
      SKELETON LOADING
 ══════════════════════════════════════════ -->
 <div *ngIf="loading" class="feed-grid">
-  <div *ngFor="let _ of skeletonItems" class="glass-card" style="padding:20px;">
-    <div class="skeleton" style="height:11px; width:80px; margin-bottom:18px;"></div>
-    <div class="skeleton" style="height:15px; width:100%; margin-bottom:8px;"></div>
-    <div class="skeleton" style="height:15px; width:82%; margin-bottom:8px;"></div>
-    <div class="skeleton" style="height:15px; width:64%; margin-bottom:18px;"></div>
-    <div style="display:flex; gap:6px;">
-      <div class="skeleton" style="height:20px; width:56px; border-radius:99px;"></div>
-      <div class="skeleton" style="height:20px; width:72px; border-radius:99px;"></div>
+  <div *ngFor="let _ of skeletonItems" class="glass-card" style="padding: 20px">
+    <div class="skeleton" style="height: 11px; width: 80px; margin-bottom: 18px"></div>
+    <div class="skeleton" style="height: 15px; width: 100%; margin-bottom: 8px"></div>
+    <div class="skeleton" style="height: 15px; width: 82%; margin-bottom: 8px"></div>
+    <div class="skeleton" style="height: 15px; width: 64%; margin-bottom: 18px"></div>
+    <div style="display: flex; gap: 6px">
+      <div class="skeleton" style="height: 20px; width: 56px; border-radius: 99px"></div>
+      <div class="skeleton" style="height: 20px; width: 72px; border-radius: 99px"></div>
     </div>
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════
      EMPTY / INTRO STATE
 ══════════════════════════════════════════ -->
-<div *ngIf="!loading && !hasResults" class="empty-state" style="min-height:360px;">
+<div *ngIf="!loading && !hasResults" class="empty-state" style="min-height: 360px">
   <!-- Animated concentric rings -->
-  <div style="position:relative; width:80px; height:80px; margin-bottom:8px;">
-    <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--accent);
-                opacity:0.6;animation:ringPulse 2.5s ease-out infinite;"></div>
-    <div style="position:absolute;inset:12px;border-radius:50%;border:1.5px solid var(--accent-2);
-                opacity:0.5;animation:ringPulse 2.5s ease-out 0.4s infinite;"></div>
-    <div style="position:absolute;inset:24px;border-radius:50%;
-                background:linear-gradient(135deg,var(--accent),var(--accent-2));
-                display:flex;align-items:center;justify-content:center;">
+  <div style="position: relative; width: 80px; height: 80px; margin-bottom: 8px">
+    <div
+      style="
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid var(--accent);
+        opacity: 0.6;
+        animation: ringPulse 2.5s ease-out infinite;
+      "
+    ></div>
+    <div
+      style="
+        position: absolute;
+        inset: 12px;
+        border-radius: 50%;
+        border: 1.5px solid var(--accent-2);
+        opacity: 0.5;
+        animation: ringPulse 2.5s ease-out 0.4s infinite;
+      "
+    ></div>
+    <div
+      style="
+        position: absolute;
+        inset: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="white" stroke-width="1.8">
-        <circle cx="9" cy="9" r="4"/>
-        <path d="M9 2v2M9 14v2M2 9h2M14 9h2"/>
+        <circle cx="9" cy="9" r="4" />
+        <path d="M9 2v2M9 14v2M2 9h2M14 9h2" />
       </svg>
     </div>
   </div>
-  <p style="font-size:17px; font-weight:600; color:var(--text-primary);">Ready to pulse</p>
-  <p style="color:var(--text-muted); max-width:320px; line-height:1.6;">
+  <p style="font-size: 17px; font-weight: 600; color: var(--text-primary)">Ready to pulse</p>
+  <p style="color: var(--text-muted); max-width: 320px; line-height: 1.6">
     Search any technology to get live updates from 8 developer sources simultaneously
   </p>
 
   <!-- Source badges -->
-  <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:16px; max-width:420px;">
-    <span *ngFor="let src of sources" class="pill"
-          style="background:var(--surface); border:1px solid var(--border); color:var(--text-secondary);">
+  <div
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+      max-width: 420px;
+    "
+  >
+    <span
+      *ngFor="let src of sources"
+      class="pill"
+      style="
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      "
+    >
       {{ src }}
     </span>
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════
      RESULTS HEADER (shows which tech)
 ══════════════════════════════════════════ -->
-<div *ngIf="!loading && hasResults"
-     style="display:flex; align-items:center; justify-content:space-between;
-            margin-bottom:24px; flex-wrap:wrap; gap:12px;"
-     class="animate-in">
-  <div style="display:flex; align-items:center; gap:12px;">
-    <h2 style="font-size:22px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary);">
+<div
+  *ngIf="!loading && hasResults"
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  "
+  class="animate-in"
+>
+  <div style="display: flex; align-items: center; gap: 12px">
+    <h2
+      style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary)"
+    >
       {{ currentTech | titlecase }}
     </h2>
-    <span class="pill" style="background:var(--accent-soft); border:1px solid rgba(99,102,241,0.2); color:var(--accent);">
+    <span
+      class="pill"
+      style="
+        background: var(--accent-soft);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        color: var(--accent);
+      "
+    >
       {{ totalResults }} results
     </span>
     <!-- Live indicator dot -->
-    <div style="display:flex;align-items:center;gap:5px;">
-      <span style="width:7px;height:7px;border-radius:50%;background:#10b981;
-                   animation:livePulse 1.8s ease-in-out infinite; display:inline-block;"></span>
-      <span style="font-family:var(--font-mono); font-size:11px; color:#10b981;">live</span>
+    <div style="display: flex; align-items: center; gap: 5px">
+      <span
+        style="
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #10b981;
+          animation: livePulse 1.8s ease-in-out infinite;
+          display: inline-block;
+        "
+      ></span>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: #10b981">live</span>
     </div>
   </div>
-  <span style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted);">
+  <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted)">
     Updated just now
   </span>
 </div>
-
 
 <!-- ══════════════════════════════════════════
      MAIN FEED GRID
 ══════════════════════════════════════════ -->
 <div *ngIf="!loading && hasResults" class="feed-grid stagger">
-
   <!-- ─ GitHub Releases ─ -->
   <div *ngIf="github.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(36,41,47,0.1);color:#24292f;">
+      <span class="section-icon" style="background: rgba(36, 41, 47, 0.1); color: #41464b">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+          <path
+            d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"
+          />
         </svg>
       </span>
       GitHub Releases
     </div>
     <div class="card-stack">
-      <div *ngFor="let item of github" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="item.url" target="_blank" class="card-link" style="flex:1;">{{ item.name }}</a>
+      <div
+        *ngFor="let item of github"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="item.url" target="_blank" class="card-link" style="flex: 1">{{ item.name }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(item)">★</button>
         </div>
         <div class="card-meta">
-          <span *ngIf="item.repo" style="color:var(--accent); opacity:0.8;">{{ item.repo }}</span>
-          <span style="opacity:0.4;">·</span>
-          <span>{{ item.date | date:'MMM d, y' }}</span>
+          <span *ngIf="item.repo" style="color: var(--accent); opacity: 0.8">{{ item.repo }}</span>
+          <span style="opacity: 0.4">·</span>
+          <span>{{ item.date | date: 'MMM d, y' }}</span>
         </div>
       </div>
     </div>
@@ -168,23 +257,49 @@
   <!-- ─ GitHub Trending ─ -->
   <div *ngIf="githubTrending.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(245,158,11,0.12);color:#d97706;">🚀</span>
+      <span class="section-icon" style="background: rgba(245, 158, 11, 0.12); color: #d97706"
+        >🚀</span
+      >
       GitHub Trending
     </div>
     <div class="card-stack">
-      <div *ngFor="let repo of githubTrending" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="repo.url" target="_blank" class="card-link" style="flex:1;">{{ repo.name }}</a>
+      <div
+        *ngFor="let repo of githubTrending"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="repo.url" target="_blank" class="card-link" style="flex: 1">{{ repo.name }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(repo)">★</button>
         </div>
-        <p *ngIf="repo.description" style="font-size:13px; color:var(--text-muted); margin-top:5px; line-height:1.5;">
+        <p
+          *ngIf="repo.description"
+          style="font-size: 13px; color: var(--text-muted); margin-top: 5px; line-height: 1.5"
+        >
           {{ repo.description }}
         </p>
-        <div class="card-meta" style="margin-top:10px; flex-wrap:wrap; gap:6px;">
-          <span class="pill" style="background:rgba(245,158,11,0.1); color:#d97706;">⭐ {{ repo.stars | number }}</span>
-          <span *ngIf="repo.language" class="pill" style="background:var(--accent-soft); color:var(--accent);">{{ repo.language }}</span>
-          <span *ngFor="let t of repo.topics" class="pill"
-                style="background:var(--surface); border:1px solid var(--border); color:var(--text-muted);">{{ t }}</span>
+        <div class="card-meta" style="margin-top: 10px; flex-wrap: wrap; gap: 6px">
+          <span class="pill" style="background: rgba(245, 158, 11, 0.1); color: #d97706"
+            >⭐ {{ repo.stars | number }}</span
+          >
+          <span
+            *ngIf="repo.language"
+            class="pill"
+            style="background: var(--accent-soft); color: var(--accent)"
+            >{{ repo.language }}</span
+          >
+          <span
+            *ngFor="let t of repo.topics"
+            class="pill"
+            style="
+              background: var(--surface);
+              border: 1px solid var(--border);
+              color: var(--text-muted);
+            "
+            >{{ t }}</span
+          >
         </div>
       </div>
     </div>
@@ -193,22 +308,37 @@
   <!-- ─ Reddit ─ -->
   <div *ngIf="reddit.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(255,69,0,0.1);color:#ff4500;">
+      <span class="section-icon" style="background: rgba(255, 69, 0, 0.1); color: #ff4500">
         <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor">
-          <circle cx="10" cy="10" r="10"/>
-          <path fill="white" d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.07-1 1 1 0 00-.96.68l-2.38-.5a.27.27 0 00-.32.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.61-1.58zM7.27 11a1 1 0 111 1 1 1 0 01-1-1zm5.58 2.71a3.58 3.58 0 01-2.85.86 3.58 3.58 0 01-2.85-.86.27.27 0 01.38-.38 3.08 3.08 0 002.47.65 3.08 3.08 0 002.47-.65.27.27 0 01.38.38zm-.18-1.71a1 1 0 111-1 1 1 0 01-1 1z"/>
+          <circle cx="10" cy="10" r="10" />
+          <path
+            fill="white"
+            d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.07-1 1 1 0 00-.96.68l-2.38-.5a.27.27 0 00-.32.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.61-1.58zM7.27 11a1 1 0 111 1 1 1 0 01-1-1zm5.58 2.71a3.58 3.58 0 01-2.85.86 3.58 3.58 0 01-2.85-.86.27.27 0 01.38-.38 3.08 3.08 0 002.47.65 3.08 3.08 0 002.47-.65.27.27 0 01.38.38zm-.18-1.71a1 1 0 111-1 1 1 0 01-1 1z"
+          />
         </svg>
       </span>
       Reddit Discussions
     </div>
     <div class="card-stack">
-      <div *ngFor="let post of reddit" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="post.url" target="_blank" class="card-link" style="flex:1;">{{ post.title }}</a>
+      <div
+        *ngFor="let post of reddit"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="post.url" target="_blank" class="card-link" style="flex: 1">{{
+            post.title
+          }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(post)">★</button>
         </div>
         <div class="card-meta">
-          <span class="pill" style="background:rgba(255,69,0,0.08); color:#ff4500; font-size:10px;">r/{{ post.subreddit }}</span>
+          <span
+            class="pill"
+            style="background: rgba(255, 69, 0, 0.08); color: #ff4500; font-size: 10px"
+            >r/{{ post.subreddit }}</span
+          >
           <span>▲ {{ post.score | number }}</span>
         </div>
       </div>
@@ -218,21 +348,33 @@
   <!-- ─ StackOverflow ─ -->
   <div *ngIf="stackoverflow.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(244,130,36,0.12);color:#f48024;">
+      <span class="section-icon" style="background: rgba(244, 130, 36, 0.12); color: #f48024">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.13v6.404h15.012zM6.111 19.731H16.85v-2.137H6.111v2.137zm.259-4.852l10.48 2.189.451-2.07-10.478-2.187-.453 2.068zm1.359-5.056l9.705 4.53.903-1.95-9.706-4.53-.902 1.95zm2.715-4.785l8.217 6.855 1.359-1.62-8.216-6.853-1.36 1.618zM15.751 0l-1.746 1.294 6.405 8.604 1.746-1.294L15.751 0z"/>
+          <path
+            d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.13v6.404h15.012zM6.111 19.731H16.85v-2.137H6.111v2.137zm.259-4.852l10.48 2.189.451-2.07-10.478-2.187-.453 2.068zm1.359-5.056l9.705 4.53.903-1.95-9.706-4.53-.902 1.95zm2.715-4.785l8.217 6.855 1.359-1.62-8.216-6.853-1.36 1.618zM15.751 0l-1.746 1.294 6.405 8.604 1.746-1.294L15.751 0z"
+          />
         </svg>
       </span>
       Stack Overflow
     </div>
     <div class="card-stack">
-      <div *ngFor="let q of stackoverflow" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="q.url" target="_blank" class="card-link" style="flex:1;">{{ q.title }}</a>
+      <div
+        *ngFor="let q of stackoverflow"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="q.url" target="_blank" class="card-link" style="flex: 1">{{ q.title }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(q)">★</button>
         </div>
         <div class="card-meta">
-          <span class="pill" style="background:rgba(244,130,36,0.1); color:#f48024; font-size:10px;">▲ {{ q.score }}</span>
+          <span
+            class="pill"
+            style="background: rgba(244, 130, 36, 0.1); color: #f48024; font-size: 10px"
+            >▲ {{ q.score }}</span
+          >
           <span>{{ q.answers }} answers</span>
         </div>
       </div>
@@ -242,17 +384,29 @@
   <!-- ─ Hacker News ─ -->
   <div *ngIf="hackernews.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(255,102,0,0.1);color:#ff6600;">Y</span>
+      <span class="section-icon" style="background: rgba(255, 102, 0, 0.1); color: #ff6600">Y</span>
       Hacker News
     </div>
     <div class="card-stack">
-      <div *ngFor="let post of hackernews" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="post.url" target="_blank" class="card-link" style="flex:1;">{{ post.title }}</a>
+      <div
+        *ngFor="let post of hackernews"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="post.url" target="_blank" class="card-link" style="flex: 1">{{
+            post.title
+          }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(post)">★</button>
         </div>
         <div class="card-meta">
-          <span class="pill" style="background:rgba(255,102,0,0.08); color:#ff6600; font-size:10px;">▲ {{ post.points }}</span>
+          <span
+            class="pill"
+            style="background: rgba(255, 102, 0, 0.08); color: #ff6600; font-size: 10px"
+            >▲ {{ post.points }}</span
+          >
           <span>{{ post.author }}</span>
         </div>
       </div>
@@ -262,18 +416,26 @@
   <!-- ─ Dev.to ─ -->
   <div *ngIf="devto.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(8,56,76,0.08);color:#08384c;">✍️</span>
+      <span class="section-icon" style="background: rgba(8, 56, 76, 0.08); color: #08384c">✍️</span>
       Dev.to Articles
     </div>
     <div class="card-stack">
-      <div *ngFor="let article of devto" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="article.url" target="_blank" class="card-link" style="flex:1;">{{ article.title }}</a>
+      <div
+        *ngFor="let article of devto"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="article.url" target="_blank" class="card-link" style="flex: 1">{{
+            article.title
+          }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(article)">★</button>
         </div>
         <div class="card-meta">
           <span>{{ article.author }}</span>
-          <span style="opacity:0.4;">·</span>
+          <span style="opacity: 0.4">·</span>
           <span>❤️ {{ article.reactions }}</span>
         </div>
       </div>
@@ -283,19 +445,29 @@
   <!-- ─ Tech News ─ -->
   <div *ngIf="news.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(16,185,129,0.1);color:#059669;">📰</span>
+      <span class="section-icon" style="background: rgba(16, 185, 129, 0.1); color: #059669"
+        >📰</span
+      >
       Tech News
     </div>
     <div class="card-stack">
-      <div *ngFor="let article of news" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <a [href]="article.url" target="_blank" class="card-link" style="flex:1;">{{ article.title }}</a>
+      <div
+        *ngFor="let article of news"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+        >
+          <a [href]="article.url" target="_blank" class="card-link" style="flex: 1">{{
+            article.title
+          }}</a>
           <button class="bookmark-btn" (click)="saveBookmark(article)">★</button>
         </div>
         <div class="card-meta">
           <span>{{ article.source }}</span>
-          <span style="opacity:0.4;">·</span>
-          <span>{{ article.publishedAt | date:'MMM d' }}</span>
+          <span style="opacity: 0.4">·</span>
+          <span>{{ article.publishedAt | date: 'MMM d' }}</span>
         </div>
       </div>
     </div>
@@ -304,41 +476,80 @@
   <!-- ─ NPM Packages ─ -->
   <div *ngIf="npm.length > 0" class="animate-in">
     <div class="section-header">
-      <span class="section-icon" style="background:rgba(203,56,55,0.1);color:#cb3837;">
+      <span class="section-icon" style="background: rgba(203, 56, 55, 0.1); color: #cb3837">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M0 0v24h24V0H0zm19.2 19.2H12v-9.6H9.6v9.6H4.8V4.8h14.4v14.4z"/>
+          <path d="M0 0v24h24V0H0zm19.2 19.2H12v-9.6H9.6v9.6H4.8V4.8h14.4v14.4z" />
         </svg>
       </span>
       NPM Packages
     </div>
     <div class="card-stack">
-      <div *ngFor="let pkg of npm" class="glass-card card-item animate-in" style="padding:16px 18px; margin-bottom:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
-          <a [href]="pkg.url" target="_blank" class="card-link" style="display:inline;">{{ pkg.name }}</a>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span class="pill" style="background:rgba(34,197,94,0.12); color:#16a34a; font-size:10px;">v{{ pkg.version }}</span>
-            <button class="bookmark-btn" (click)="saveBookmark(pkg)" style="opacity:0.6;">★</button>
+      <div
+        *ngFor="let pkg of npm"
+        class="glass-card card-item animate-in"
+        style="padding: 16px 18px; margin-bottom: 10px"
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            flex-wrap: wrap;
+          "
+        >
+          <a [href]="pkg.url" target="_blank" class="card-link" style="display: inline">{{
+            pkg.name
+          }}</a>
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span
+              class="pill"
+              style="background: rgba(34, 197, 94, 0.12); color: #16a34a; font-size: 10px"
+              >v{{ pkg.version }}</span
+            >
+            <button class="bookmark-btn" (click)="saveBookmark(pkg)" style="opacity: 0.6">★</button>
           </div>
         </div>
-        <p *ngIf="pkg.description" style="font-size:12.5px; color:var(--text-muted); margin-top:5px; line-height:1.5;">{{ pkg.description }}</p>
-        <div class="card-meta"><span>📥 {{ pkg.weeklyDownloads | number }}/week</span></div>
+        <p
+          *ngIf="pkg.description"
+          style="font-size: 12.5px; color: var(--text-muted); margin-top: 5px; line-height: 1.5"
+        >
+          {{ pkg.description }}
+        </p>
+        <div class="card-meta">
+          <span>📥 {{ pkg.weeklyDownloads | number }}/week</span>
+        </div>
       </div>
     </div>
   </div>
-
-</div><!-- /feed-grid -->
-
+</div>
+<!-- /feed-grid -->
 
 <!-- ══════════════════════════════════════════
      PULSE SCORE CHART
 ══════════════════════════════════════════ -->
-<div *ngIf="Object.keys(techPopularity).length > 0" id="trends"
-     style="margin-top:56px;" class="animate-in">
-  <div class="section-header" style="margin-bottom:20px;">
-    <span class="section-icon" style="background:var(--accent-soft);color:var(--accent);">📊</span>
+<div
+  *ngIf="Object.keys(techPopularity).length > 0"
+  id="trends"
+  style="margin-top: 56px"
+  class="animate-in"
+>
+  <div class="section-header" style="margin-bottom: 20px">
+    <span class="section-icon" style="background: var(--accent-soft); color: var(--accent)"
+      >📊</span
+    >
     Technology Pulse Score
-    <span style="margin-left:auto; font-size:10px; opacity:0.5; text-transform:none;
-                 letter-spacing:0; font-weight:400; font-family:var(--font-mono);">
+    <span
+      style="
+        margin-left: auto;
+        font-size: 10px;
+        opacity: 0.5;
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 400;
+        font-family: var(--font-mono);
+      "
+    >
       GitHub × Reddit × StackOverflow × HN × Dev.to
     </span>
   </div>
@@ -347,40 +558,76 @@
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════
      BOOKMARKS
 ══════════════════════════════════════════ -->
-<div id="bookmark" style="margin-top:56px;" class="animate-in">
-  <div class="section-header" style="margin-bottom:20px;">
-    <span class="section-icon" style="background:rgba(245,158,11,0.1);color:#d97706;">★</span>
+<div id="bookmark" style="margin-top: 56px" class="animate-in">
+  <div class="section-header" style="margin-bottom: 20px">
+    <span class="section-icon" style="background: rgba(245, 158, 11, 0.1); color: #d97706">★</span>
     Saved Bookmarks
-    <button *ngIf="bookmarks.length > 0" (click)="clearBookmarks()"
-            style="margin-left:auto; font-size:11px; color:var(--text-muted); cursor:pointer;
-                   background:none; border:none; font-family:var(--font-mono); padding:0;
-                   text-transform:none; letter-spacing:0; font-weight:400;">
+    <button
+      *ngIf="bookmarks.length > 0"
+      (click)="clearBookmarks()"
+      style="
+        margin-left: auto;
+        font-size: 11px;
+        color: var(--text-muted);
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-family: var(--font-mono);
+        padding: 0;
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 400;
+      "
+    >
       Clear all
     </button>
   </div>
 
-  <div *ngIf="bookmarks.length === 0" class="empty-state" style="min-height:140px;">
-    <span style="font-size:28px; opacity:0.4;">★</span>
-    <p style="font-size:14px;">Click ★ on any card to save it here</p>
+  <div *ngIf="bookmarks.length === 0" class="empty-state" style="min-height: 140px">
+    <span style="font-size: 28px; opacity: 0.4">★</span>
+    <p style="font-size: 14px">Click ★ on any card to save it here</p>
   </div>
 
   <div *ngIf="bookmarks.length > 0" class="feed-grid stagger">
-    <div *ngFor="let item of bookmarks; let i = index"
-         class="glass-card animate-in" style="padding:16px 18px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <a [href]="item.url" target="_blank" class="card-link" style="flex:1;">
+    <div
+      *ngFor="let item of bookmarks; let i = index"
+      class="glass-card animate-in"
+      style="padding: 16px 18px"
+    >
+      <div
+        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"
+      >
+        <a [href]="item.url" target="_blank" class="card-link" style="flex: 1">
           {{ item.name || item.title }}
         </a>
-        <button (click)="removeBookmark(i)"
-                style="font-size:13px; color:var(--text-muted); cursor:pointer;
-                       background:none; border:none; padding:2px 4px; border-radius:5px;
-                       transition:color 0.15s; flex-shrink:0; opacity:0.5;"
-                onmouseenter="this.style.color='#ef4444';this.style.opacity='1'"
-                onmouseleave="this.style.color='var(--text-muted)';this.style.opacity='0.5'">✕</button>
+        <button
+          (click)="removeBookmark(i)"
+          style="
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 2px 4px;
+            border-radius: 5px;
+            transition: color 0.15s;
+            flex-shrink: 0;
+            opacity: 0.5;
+          "
+          onmouseenter="
+            this.style.color = '#ef4444';
+            this.style.opacity = '1';
+          "
+          onmouseleave="
+            this.style.color = 'var(--text-muted)';
+            this.style.opacity = '0.5';
+          "
+        >
+          ✕
+        </button>
       </div>
     </div>
   </div>
@@ -398,7 +645,7 @@
     height: 22px;
     border-radius: 6px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 900;
     flex-shrink: 0;
   }
 
@@ -407,12 +654,25 @@
   }
 
   @keyframes ringPulse {
-    0%   { transform: scale(1); opacity: 0.7; }
-    100% { transform: scale(2.2); opacity: 0; }
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
   }
 
   @keyframes livePulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50%     { opacity:0.4; transform:scale(1.6); }
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.6);
+    }
   }
 </style>

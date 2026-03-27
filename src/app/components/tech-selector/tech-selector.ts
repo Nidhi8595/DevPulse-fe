@@ -1,9 +1,11 @@
-import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild, ApplicationRef } from '@angular/core';
 import { FeedService } from '../../services/feed';
 import { TechService } from '../../services/tech';
 import { CommonModule, DecimalPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { TrendingChart } from '../trending-chart/trending-chart';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tech-selector',
@@ -15,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 export class TechSelector {
 
   @ViewChild(TrendingChart) chartComponent!: TrendingChart;
+  private searchSubject = new Subject<string>();
 
   // Expose Object to template for Object.keys()
   Object = Object;
@@ -41,14 +44,14 @@ export class TechSelector {
   ];
 
   // ── Feed data ──────────────────────────────────
-  news: any[]           = [];
-  github: any[]         = [];
-  reddit: any[]         = [];
-  stackoverflow: any[]  = [];
-  hackernews: any[]     = [];
-  devto: any[]          = [];
+  news: any[] = [];
+  github: any[] = [];
+  reddit: any[] = [];
+  stackoverflow: any[] = [];
+  hackernews: any[] = [];
+  devto: any[] = [];
   githubTrending: any[] = [];
-  npm: any[]            = [];
+  npm: any[] = [];
 
   // ── Chart ──────────────────────────────────────
   techPopularity: Record<string, number> = {};
@@ -67,14 +70,44 @@ export class TechSelector {
     private feedService: FeedService,
     private techService: TechService,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private appRef: ApplicationRef,
+
+  ) { }
+
+  // ngOnInit() {
+  //   const saved = localStorage.getItem('devpulse-bookmarks');
+  //   if (saved) {
+  //     try { this.bookmarks = JSON.parse(saved); } catch { this.bookmarks = []; }
+  //   }
+  // }
+
 
   ngOnInit() {
-    const saved = localStorage.getItem('devpulse-bookmarks');
-    if (saved) {
-      try { this.bookmarks = JSON.parse(saved); } catch { this.bookmarks = []; }
-    }
+  // Load bookmarks
+  const saved = localStorage.getItem('devpulse-bookmarks');
+  if (saved) {
+    try { this.bookmarks = JSON.parse(saved); } catch { this.bookmarks = []; }
   }
+
+  // Debounced search — waits 300ms after user stops typing
+  // distinctUntilChanged skips if the value hasn't changed
+  // switchMap cancels any in-flight request when a new one comes in
+  this.searchSubject.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    switchMap(term => {
+      if (term.length < 2) return [];
+      return this.techService.search(term);
+    })
+  ).subscribe({
+    next: (data: any) => {
+      this.suggestions = data || [];
+      this.cdr.detectChanges();
+      this.appRef.tick();
+    },
+    error: () => { this.suggestions = []; }
+  });
+}
 
   // ── Normalize ──────────────────────────────────
   private normalizeTechName(name: string): string {
@@ -89,17 +122,25 @@ export class TechSelector {
   }
 
   // ── Autocomplete ───────────────────────────────
+  // onSearchChange() {
+  //   this.selectedFromSuggestion = false;
+  //   if (this.searchTerm.length < 2) {
+  //     this.suggestions = [];
+  //     return;
+  //   }
+  //   this.techService.search(this.searchTerm).subscribe({
+  //     next: (data: any) => { this.suggestions = data || []; },
+  //     error: () => { this.suggestions = []; },
+  //   });
+  // }
+
   onSearchChange() {
-    this.selectedFromSuggestion = false;
-    if (this.searchTerm.length < 2) {
-      this.suggestions = [];
-      return;
-    }
-    this.techService.search(this.searchTerm).subscribe({
-      next: (data: any) => { this.suggestions = data || []; },
-      error: () => { this.suggestions = []; },
-    });
+  this.selectedFromSuggestion = false;
+  this.searchSubject.next(this.searchTerm);
+  if (this.searchTerm.length < 2) {
+    this.suggestions = [];
   }
+}
 
   // ── Select from suggestion list ────────────────
   selectTech(tech: string) {
@@ -131,6 +172,7 @@ export class TechSelector {
     this.currentTech = this.normalizeTechName(tech);
     this.clearFeedData();
     this.cdr.detectChanges();
+    this.appRef.tick();
 
     this.feedService.getFeed(tech).subscribe({
       next: (data: any) => {
@@ -138,35 +180,37 @@ export class TechSelector {
           alert(data.error);
           this.loading = false;
           this.cdr.detectChanges();
+          this.appRef.tick();
           return;
         }
 
-        this.news          = data.news          || [];
-        this.github        = data.github        || [];
-        this.reddit        = data.reddit        || [];
+        this.news = data.news || [];
+        this.github = data.github || [];
+        this.reddit = data.reddit || [];
         this.stackoverflow = data.stackoverflow || [];
-        this.hackernews    = data.hackernews    || [];
-        this.devto         = data.devto         || [];
+        this.hackernews = data.hackernews || [];
+        this.devto = data.devto || [];
         this.githubTrending = data.githubTrending || [];
-        this.npm           = data.npm           || [];
+        this.npm = data.npm || [];
 
         // Calculate weighted pulse score
         const canonical = this.normalizeTechName(tech);
         const score =
-          (data.github?.length         || 0) * 5 +
+          (data.github?.length || 0) * 5 +
           (data.githubTrending?.length || 0) * 3 +
-          (data.reddit?.length         || 0) * 3 +
-          (data.stackoverflow?.length  || 0) * 3 +
-          (data.hackernews?.length     || 0) * 2 +
-          (data.devto?.length          || 0) * 2 +
-          (data.npm?.length            || 0) * 2 +
-          (data.news?.length           || 0) * 1;
+          (data.reddit?.length || 0) * 3 +
+          (data.stackoverflow?.length || 0) * 3 +
+          (data.hackernews?.length || 0) * 2 +
+          (data.devto?.length || 0) * 2 +
+          (data.npm?.length || 0) * 2 +
+          (data.news?.length || 0) * 1;
 
         this.techPopularity[canonical] = score;
 
         this.hasResults = true;
         this.loading = false;
         this.cdr.detectChanges();
+        this.appRef.tick();
 
         // Update chart after a short delay so it renders after DOM update
         setTimeout(() => this.updateChart(), 100);
@@ -175,6 +219,7 @@ export class TechSelector {
         console.error('Feed error:', err);
         this.loading = false;
         this.cdr.detectChanges();
+        this.appRef.tick();
       },
     });
   }
@@ -191,7 +236,7 @@ export class TechSelector {
     const entries = Object.entries(this.techPopularity)
       .sort((a, b) => b[1] - a[1]);
     const labels = entries.map(e => e[0]);
-    const data   = entries.map(e => e[1]);
+    const data = entries.map(e => e[1]);
     if (this.chartComponent) {
       this.chartComponent.createChart(labels, data);
     }

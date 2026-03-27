@@ -27,8 +27,8 @@
 
   --bg-base:       #f2f1ee;
   --text-primary:  #111110;
-  --text-secondary:#5a5855;
-  --text-muted:    #a09e99;
+  --text-secondary:#41403e;
+  --text-muted:    #777673;
 
   --blob-1: rgba(99,102,241,0.18);
   --blob-2: rgba(139,92,246,0.14);
@@ -49,8 +49,8 @@
 
   --bg-base:       #0a0a0d;
   --text-primary:  #f0efeb;
-  --text-secondary:#8c8a84;
-  --text-muted:    #55534f;
+  --text-secondary:#b5b4b1;
+  --text-muted:    #999794;
 
   --blob-1: rgba(99,102,241,0.12);
   --blob-2: rgba(139,92,246,0.10);
@@ -176,11 +176,11 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: medium;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-primary);
   margin-bottom: 14px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
@@ -352,7 +352,7 @@ body {
 
 /* ── Card Typography ── */
 .card-link {
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-weight: 500;
   font-size: 14.5px;
   line-height: 1.5;
@@ -375,7 +375,7 @@ body {
 
 /* ── Bookmark Button ── */
 .bookmark-btn {
-  opacity: 0;
+  opacity: 5;
   color: var(--text-muted);
   font-size: 15px;
   cursor: pointer;
